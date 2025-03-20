@@ -1,0 +1,1 @@
+#Given a specific aricle, this class will find the relevant news articles

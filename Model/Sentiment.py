@@ -1,0 +1,1 @@
+#Detecting sentiment of the news articles
