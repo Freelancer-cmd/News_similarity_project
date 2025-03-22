@@ -1,0 +1,15 @@
+### Search for sports
+POST http://localhost:8000/search
+Content-Type: application/json
+
+{
+  "queryText": "sports achievements",
+  "top_k": 3
+}
+
+### Health check
+GET http://localhost:8000/health
+
+
+### Root check
+GET http://localhost:8000/
