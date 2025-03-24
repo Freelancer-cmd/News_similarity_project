@@ -19,21 +19,12 @@ search_engine.load_index()
 
 # Request model
 class SearchRequest(BaseModel):
-    queryText: str = "test query"
-    top_k: int = 10
+    queryText: str
+    topK: int
 
 @app.post("/search")
 async def search(request: SearchRequest):
     return {
         "query": request.queryText,
-        "results": search_engine.search(request.queryText, request.top_k)
+        "results": search_engine.search(request.queryText, request.topK)
     }
-
-@app.get("/health")
-async def health_check():
-    return {"status": "ok"}
-
-# Root endpoint
-@app.get("/")
-async def root():
-    return {"message": "News Search API is running!"}

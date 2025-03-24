@@ -12,13 +12,15 @@ class NewsSearchEngine:
         self.model = SentenceTransformer(model_name)
         self.index = None
         self.documents = []
-        self.metadata_path = Path("Data/news_search_data")
+
+        self.metadata_path = Path("Data/Data/news_search_data")
 
     def load_data(self, csv_path):
         """Load and prepare news data from CSV"""
         df = pd.read_csv(csv_path)
         df["FullText"] = df["Headline"].astype(str) + ". " + df["Content"].astype(str)
-        self.documents = df["FullText"].tolist()
+        self.documents = (df.drop_duplicates(subset="FullText")["FullText"]
+                          .tolist())
         return self.documents
 
     def create_embeddings(self, documents):
@@ -32,7 +34,7 @@ class NewsSearchEngine:
 
     def save_index(self):
         """Save index and metadata to disk"""
-        self.metadata_path.mkdir(exist_ok=True)
+        self.metadata_path.mkdir(parents=True, exist_ok=True)
         with open(self.metadata_path / "index.pkl", "wb") as f:
             pickle.dump(self.index, f)
         with open(self.metadata_path / "documents.pkl", "wb") as f:
@@ -40,7 +42,9 @@ class NewsSearchEngine:
 
     def load_index(self):
         """Load existing index from disk"""
-        with open(self.metadata_path / "index.pkl", "rb") as f:
+        index_file = self.metadata_path / "index.pkl"
+        print(f"Looking for index at: {index_file.resolve()}")
+        with open(index_file, "rb") as f:
             self.index = pickle.load(f)
         with open(self.metadata_path / "documents.pkl", "rb") as f:
             self.documents = pickle.load(f)
