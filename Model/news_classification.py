@@ -1,1 +1,0 @@
-#This will define the cateories, keywords and sentiment of the news and store it in the database/file
