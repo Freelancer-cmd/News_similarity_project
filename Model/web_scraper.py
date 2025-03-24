@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 NEWS_API_KEY = os.getenv("NEWS_API_KEY") 
-NEWS_API_URL = "https://newsapi.org/v2/top-headlines"
+NEWS_API_URL = "https://newsapi.org/v2/everything"
 
 def fetch_articles(query: str, num_articles: int =5):
     """
@@ -23,13 +23,6 @@ def fetch_articles(query: str, num_articles: int =5):
     "apiKey": NEWS_API_KEY,
     "language": "en",
     "pageSize": num_articles,
-    "sources": ",".join([
-        "breitbart-news",
-        "fox-news",
-        "the-wall-street-journal",
-        "the-new-york-times",
-        "mother-jones"
-    ]),
     "q": query
 }
 

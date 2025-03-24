@@ -1,7 +1,8 @@
 from fastapi import FastAPI
-from Data.dataset import NewsSearchEngine
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+
+from Model.relevant_news import search_relevant_articles
 
 app = FastAPI(title="News Search API")
 
@@ -13,9 +14,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-search_engine = NewsSearchEngine()
-search_engine.load_index()
-
 
 # Request model
 class SearchRequest(BaseModel):
@@ -26,5 +24,5 @@ class SearchRequest(BaseModel):
 async def search(request: SearchRequest):
     return {
         "query": request.queryText,
-        "results": search_engine.search(request.queryText, request.topK)
+        "results": search_relevant_articles(request.queryText, request.topK)
     }

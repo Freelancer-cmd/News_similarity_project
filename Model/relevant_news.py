@@ -1,6 +1,6 @@
-from web_scraper import fetch_articles
-from sentiment import get_sentiment
-from rag import NewsSearchEngine
+from Model.sentiment import get_sentiment
+from Model.web_scraper import fetch_articles
+from Model.rag import NewsSearchEngine
 
 
 def enrich_articles_with_sentiment(query, num_articles=10):
@@ -18,14 +18,17 @@ def enrich_articles_with_sentiment(query, num_articles=10):
         sentiment = get_sentiment(title,content)
         enriched.append((url, title, content, date, sentiment))
 
-    return enriched
+    return enriched, len(raw_articles)
 
 
 def search_relevant_articles(query, top_k=5):
     """
     Returns the top-k relevant articles enriched with sentiment scores.
     """
-    enriched_articles = enrich_articles_with_sentiment(query, num_articles=15)
+    enriched_articles, num_articles = enrich_articles_with_sentiment(query, num_articles=100)
+
+    if num_articles == 0:
+        return []
 
     documents = [title + ". " + content for (_, title, content, _, _) in enriched_articles]
 
@@ -34,9 +37,7 @@ def search_relevant_articles(query, top_k=5):
 
     print("Size of embeddings:", embeddings.shape)
 
-    search_engine.build_index(embeddings)
-
-    search_engine.load_index()
+    search_engine.build_index(embeddings, min(top_k, num_articles))
 
     results = search_engine.search(query, top_k=top_k)
 
